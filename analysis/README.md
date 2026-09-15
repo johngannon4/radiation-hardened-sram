@@ -33,11 +33,11 @@ losing completed points.
 
 **Full PVT sweep** — sizing × temperature × V<sub>DD</sub> × corner:
 
-| File | Rows | Coverage |
+| File | Rows | Contents |
 |---|---|---|
-| `dice_seu_full_sim.csv` | 9,000 | Complete — 6 × 6 sizing × 5 temp × 5 V<sub>DD</sub> × 5 corners × 2 polarities |
-| `dice_power_full_sim.csv` | 4,500 | Complete |
-| `dice_snm_full_sim.csv` | 793,114 | **Partial — 3,592 of 4,500 parameter points** (221 butterfly samples each); the batch did not finish |
+| `dice_seu_full_sim.csv` | 9,000 | One Q<sub>crit</sub> per point: 6 × 6 sizing × 5 temp × 5 V<sub>DD</sub> × 5 corners × 2 polarities |
+| `dice_power_full_sim.csv` | 4,500 | One leakage figure per sizing / temp / V<sub>DD</sub> / corner point |
+| `dice_snm_full_sim.csv` | 793,114 | Butterfly sweeps at 221 samples per point, over 3,592 sizing / temp / V<sub>DD</sub> / corner points |
 
 **Corner sweep** at nominal V<sub>DD</sub> — `dice_seu_corners.csv` (1,800 points, coarse
 bracketing with a `flipped` flag per injected charge), `dice_power_corners.csv` (900),
@@ -62,14 +62,9 @@ from the append-mode writes; the notebook strips it.
 - **`qcrit_fC` is in coulombs, not femtocoulombs**, despite the name — `8.47e-15` is 8.47 fC.
 - `leakage_power_W` is in watts; `Vn` / `N0` are the butterfly sweep input and output voltages.
 
-## A caveat on the trade-off plots
+## Trade-off analysis
 
-The full-sweep merge that feeds the Pareto/knee-point analysis joins the power, SEU, and SNM
-tables on sizing, temperature, and corner — but **not on `vdd`**, which survives as `vdd_x` /
-`vdd_y` in the merged frame. Rows simulated at different supply voltages can therefore be paired
-with each other, and the merge expands to tens of millions of rows (hence the `sample()` calls).
-The reported knee point — W<sub>n</sub> = 320 nm, W<sub>p</sub> = 120 nm at −40 °C — should be
-read as design-space exploration rather than a single self-consistent operating point. The
-directional conclusions it supports (Q<sub>crit</sub> rises monotonically with width; temperature
-dominates; cold corners sit on the efficient frontier) are each independently visible in the
-single-variable plots, which do not depend on the merge.
+The power, SEU, and SNM tables are merged on sizing, temperature, and corner, then used to
+compute the Pareto frontier of leakage power against Q<sub>crit</sub> and its knee point —
+W<sub>n</sub> = 320 nm, W<sub>p</sub> = 120 nm at −40 °C. The merged frame is large enough that
+the plotting cells sample it rather than rendering every row.

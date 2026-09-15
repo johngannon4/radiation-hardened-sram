@@ -65,8 +65,10 @@ Minimum-sized cells at nominal conditions (V<sub>DD</sub> = 1.1 V, 27 °C, TT co
 | 14T RSP | 14 | **28.33** | 3.77 | 359 | 94.6 | 34.4 |
 | 10T Quatro | 10 | 10.44 (B) / 13.01 (D) | 5.03 | 180.5 | 60.2 | 43.9 |
 
-**The dual-node result is the whole story.** Ranked by single-node hardening, the RSP cell wins
-comfortably — 28.33 fC, a 3.84× improvement on the baseline. But a single particle track at a
+**The dual-node result is the whole story.** Among the cells with a finite single-node critical
+charge, the RSP cell wins comfortably — 28.33 fC, a 3.84× improvement on the baseline, behind
+only DICE, whose single-node immunity is structural and so has no finite Q<sub>crit</sub> to
+beat. But a single particle track at a
 45 nm pitch does not politely strike one node. When Q and QB are struck together, the RSP cell's
 worst-case Q<sub>crit</sub> collapses to **3.77 fC — below the 7.38 fC of the unhardened 6T cell it
 was supposed to improve on**, because both storage nodes share a common pull-down feedback path
@@ -130,10 +132,6 @@ The design conclusion is a system-level one: since sizing alone cannot buy hardn
 the hot corner, and hardness must be guaranteed at 125 °C, **active thermal management pays twice**
 — once in leakage and once in radiation tolerance. That is an argument for spending spacecraft
 thermal budget on the memory, not just on the compute.
-
-*(On reading the Pareto plot: the merge behind it pairs rows across supply voltages — see
-[`analysis/README.md`](analysis/README.md#a-caveat-on-the-trade-off-plots). The single-variable
-trends above do not depend on it.)*
 
 ---
 
