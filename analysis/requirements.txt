@@ -1,0 +1,7 @@
+# Python environment for sram_analysis.ipynb
+# Originally run on CPython 3.10; the committed code also runs on 3.13 / NumPy 2.x.
+numpy>=1.24
+pandas>=1.5
+matplotlib>=3.6
+scikit-learn>=1.2
+jupyterlab>=3.5

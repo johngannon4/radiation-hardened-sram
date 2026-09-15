@@ -1,0 +1,11 @@
+# Default: normalize text to LF in the repository. The OCEAN scripts and the
+# Python analysis come from Linux and should stay that way.
+* text=auto eol=lf
+
+# The Cadence library and the saved ADE states are tool-written files — some
+# binary (.oa), some text with CRLF that Virtuoso wrote itself. Store them
+# byte-for-byte so nothing is rewritten on the way in or out.
+cadence/** -text
+
+# Committed notebook outputs include base64 images; leave them alone.
+*.ipynb -text

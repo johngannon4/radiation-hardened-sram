@@ -1,0 +1,115 @@
+; run_full_sim.ocn
+; Complete sweep: SEU + Power + SNM
+; Corners: tt ff ss fs sf
+; Temperatures: -40 0 27 85 125
+; VDD: 1.0 1.05 1.1 1.15 1.2
+; Sizing: 6x6 grid
+
+; ---- Write CSV headers ----
+port = outfile( "/lcars/home/g/gannon1/cadenceGPDK/MemoryDesignFinalProject/dice_seu_full_sim.csv" "a" )
+fprintf( port "corner,wn_store,wp_store,wn_access,temp,vdd,polarity,qcrit_fC\n" )
+close( port )
+
+port = outfile( "/lcars/home/g/gannon1/cadenceGPDK/MemoryDesignFinalProject/dice_power_full_sim.csv" "a" )
+fprintf( port "corner,wn_store,wp_store,wn_access,temp,vdd,leakage_power_W\n" )
+close( port )
+
+port = outfile( "/lcars/home/g/gannon1/cadenceGPDK/MemoryDesignFinalProject/dice_snm_full_sim.csv" "a" )
+fprintf( port "corner,wn_store,wp_store,wn_access,temp,vdd,Vn,N0\n" )
+close( port )
+
+; ---- Define sweep space ----
+wn_store_list  = list( 120e-9 160e-9 200e-9 240e-9 280e-9 320e-9 )
+wp_store_list  = list( 120e-9 160e-9 200e-9 240e-9 280e-9 320e-9 )
+wn_access_val  = 120e-9
+temp_list      = list( -40.0 0.0 27.0 85.0 125.0 )
+vdd_list       = list( 1.0 1.05 1.1 1.15 1.2 )
+polarity_list  = list( 1 0 )
+corner_list    = list( "tt" "ff" "ss" "fs" "sf" )
+
+base = "/lcars/home/g/gannon1/cadenceGPDK/MemoryDesignFinalProject/"
+
+; ================================================================
+; SEU SWEEP
+; ================================================================
+printf("Starting SEU sweep...\n")
+foreach( corner corner_list
+    when( corner == "tt" seu_script = strcat( base "dice_seu_single_tt_full.ocn" ) )
+    when( corner == "ff" seu_script = strcat( base "dice_seu_single_ff_full.ocn" ) )
+    when( corner == "ss" seu_script = strcat( base "dice_seu_single_ss_full.ocn" ) )
+    when( corner == "fs" seu_script = strcat( base "dice_seu_single_fs_full.ocn" ) )
+    when( corner == "sf" seu_script = strcat( base "dice_seu_single_sf_full.ocn" ) )
+    foreach( wn wn_store_list
+        foreach( wp wp_store_list
+            foreach( tmp temp_list
+                foreach( vdd vdd_list
+                    foreach( pol polarity_list
+                        g_wn_store  = wn
+                        g_wp_store  = wp
+                        g_wn_access = wn_access_val
+                        g_temp      = tmp
+                        g_vdd       = vdd
+                        g_polarity  = pol
+                        load( seu_script )
+                    )
+                )
+            )
+        )
+    )
+)
+printf("SEU sweep complete.\n")
+
+; ================================================================
+; POWER SWEEP
+; ================================================================
+printf("Starting power sweep...\n")
+foreach( corner corner_list
+    when( corner == "tt" pwr_script = strcat( base "dice_power_single_tt_full.ocn" ) )
+    when( corner == "ff" pwr_script = strcat( base "dice_power_single_ff_full.ocn" ) )
+    when( corner == "ss" pwr_script = strcat( base "dice_power_single_ss_full.ocn" ) )
+    when( corner == "fs" pwr_script = strcat( base "dice_power_single_fs_full.ocn" ) )
+    when( corner == "sf" pwr_script = strcat( base "dice_power_single_sf_full.ocn" ) )
+    foreach( wn wn_store_list
+        foreach( wp wp_store_list
+            foreach( tmp temp_list
+                foreach( vdd vdd_list
+                    g_wn_store  = wn
+                    g_wp_store  = wp
+                    g_wn_access = wn_access_val
+                    g_temp      = tmp
+                    g_vdd       = vdd
+                    load( pwr_script )
+                )
+            )
+        )
+    )
+)
+printf("Power sweep complete.\n")
+
+; ================================================================
+; SNM SWEEP
+; ================================================================
+printf("Starting SNM sweep...\n")
+foreach( corner corner_list
+    when( corner == "tt" snm_script = strcat( base "dice_snm_single_tt_full.ocn" ) )
+    when( corner == "ff" snm_script = strcat( base "dice_snm_single_ff_full.ocn" ) )
+    when( corner == "ss" snm_script = strcat( base "dice_snm_single_ss_full.ocn" ) )
+    when( corner == "fs" snm_script = strcat( base "dice_snm_single_fs_full.ocn" ) )
+    when( corner == "sf" snm_script = strcat( base "dice_snm_single_sf_full.ocn" ) )
+    foreach( wn wn_store_list
+        foreach( wp wp_store_list
+            foreach( tmp temp_list
+                foreach( vdd vdd_list
+                    g_wn_store  = wn
+                    g_wp_store  = wp
+                    g_wn_access = wn_access_val
+                    g_temp      = tmp
+                    g_vdd       = vdd
+                    load( snm_script )
+                )
+            )
+        )
+    )
+)
+printf("SNM sweep complete.\n")
+printf("All simulations complete.\n")

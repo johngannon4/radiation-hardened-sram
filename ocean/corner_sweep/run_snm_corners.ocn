@@ -1,0 +1,44 @@
+; run_snm_corners.ocn
+
+; ---- Write CSV header ----
+csvport = outfile( "/lcars/home/g/gannon1/cadenceGPDK/MemoryDesignFinalProject/dice_snm_corners.csv" "a" )
+fprintf( csvport "corner,wn_store,wp_store,wn_access,temp,Vn,N0\n" )
+close( csvport )
+
+; ---- Define sweep space ----
+wn_store_list  = list( 120e-9 160e-9 200e-9 240e-9 280e-9 320e-9 )
+wp_store_list  = list( 120e-9 160e-9 200e-9 240e-9 280e-9 320e-9 )
+wn_access_val  = 120e-9
+temp_list      = list( -40.0 0.0 27.0 85.0 125.0 )
+corner_list    = list( "tt" "ff" "ss" "fs" "sf" )
+
+foreach( corner corner_list
+    when( corner == "tt"
+        single_script = "/lcars/home/g/gannon1/cadenceGPDK/MemoryDesignFinalProject/dice_snm_single_tt.ocn"
+    )
+    when( corner == "ff"
+        single_script = "/lcars/home/g/gannon1/cadenceGPDK/MemoryDesignFinalProject/dice_snm_single_ff.ocn"
+    )
+    when( corner == "ss"
+        single_script = "/lcars/home/g/gannon1/cadenceGPDK/MemoryDesignFinalProject/dice_snm_single_ss.ocn"
+    )
+    when( corner == "fs"
+        single_script = "/lcars/home/g/gannon1/cadenceGPDK/MemoryDesignFinalProject/dice_snm_single_fs.ocn"
+    )
+    when( corner == "sf"
+        single_script = "/lcars/home/g/gannon1/cadenceGPDK/MemoryDesignFinalProject/dice_snm_single_sf.ocn"
+    )
+    foreach( wn wn_store_list
+        foreach( wp wp_store_list
+            foreach( tmp temp_list
+                g_wn_store  = wn
+                g_wp_store  = wp
+                g_wn_access = wn_access_val
+                g_temp      = tmp
+                load( single_script )
+            )
+        )
+    )
+)
+
+printf("SNM corner sweep complete.\n")

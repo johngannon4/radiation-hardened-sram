@@ -1,0 +1,33 @@
+; dice_snm_single_tt.ocn
+simulator( 'spectre )
+design( "/lcars/home/g/gannon1/simulation/12T_DICE_Bitcell_SNM/spectre/schematic/netlist/netlist" )
+resultsDir( "/lcars/home/g/gannon1/simulation/12T_DICE_Bitcell_SNM/spectre/schematic_tt" )
+modelFile(
+    '("/lcars/software/linux/x86_64/ic-design/design_kits/gpdk045_v_6_0/gpdk045/../models/spectre/gpdk045.scs" "fs")
+)
+analysis( 'dc ?saveOppoint t ?hysteresis t ?param "Vn" ?start "0" ?stop "1.1" )
+desVar( "wn_store"  g_wn_store )
+desVar( "wp_store"  g_wp_store )
+desVar( "wn_access" g_wn_access )
+desVar( "Vn" 0 )
+envOption(
+    'analysisOrder list("dc")
+)
+temp( g_temp )
+
+run()
+selectResult( 'dc )
+
+n0_wave = getData("N0")
+
+csvport = outfile( "/lcars/home/g/gannon1/cadenceGPDK/MemoryDesignFinalProject/dice_snm_corners.csv" "a" )
+
+vn_pt = 0.0
+while( vn_pt <= 1.1
+    n0_val = value( n0_wave vn_pt )
+    fprintf( csvport "%s,%g,%g,%g,%g,%g,%g\n"
+        "fs" g_wn_store g_wp_store g_wn_access g_temp vn_pt n0_val )
+    vn_pt = vn_pt + 0.005
+)
+
+close( csvport )

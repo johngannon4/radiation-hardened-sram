@@ -1,0 +1,38 @@
+; dice_power_single_tt_full.ocn
+simulator( 'spectre )
+design( "/lcars/home/g/gannon1/simulation/12T_DICE_Bitcell_SEU/spectre/schematic/netlist/netlist" )
+resultsDir( "/lcars/home/g/gannon1/simulation/12T_DICE_Bitcell_power/spectre/schematic" )
+modelFile(
+    '("/lcars/software/linux/x86_64/ic-design/design_kits/gpdk045_v_6_0/gpdk045/../models/spectre/gpdk045.scs" "tt")
+)
+analysis( 'dc )
+envOption(
+    'analysisOrder list("dc")
+)
+converge( 'nodeset "/N0" g_vdd )
+converge( 'nodeset "/N2" g_vdd )
+converge( 'nodeset "/N1" 0.0 )
+converge( 'nodeset "/N3" 0.0 )
+desVar( "wn_store"  g_wn_store )
+desVar( "wp_store"  g_wp_store )
+desVar( "wn_access" g_wn_access )
+desVar( "Vdd"       g_vdd )
+desVar( "Qinj0" 0 )
+desVar( "Qinj1" 0 )
+desVar( "Qinj2" 0 )
+desVar( "Qinj3" 0 )
+desVar( "Ipeak0" 0.0 )
+desVar( "Ipeak1" 0.0 )
+desVar( "Ipeak2" 0.0 )
+desVar( "Ipeak3" 0.0 )
+temp( g_temp )
+
+run()
+selectResult( 'dc )
+
+leakage_power = abs( getData("V0:p") ) * g_vdd
+
+csvport = outfile( "/lcars/home/g/gannon1/cadenceGPDK/MemoryDesignFinalProject/dice_power_full_sim.csv" "a" )
+fprintf( csvport "%s,%g,%g,%g,%g,%g,%g\n"
+    "tt" g_wn_store g_wp_store g_wn_access g_temp g_vdd leakage_power )
+close( csvport )

@@ -1,0 +1,29 @@
+; run_snm.ocn
+
+; ---- Write header ----
+csvport = outfile( "/lcars/home/g/gannon1/cadenceGPDK/MemoryDesignFinalProject/dice_snm_results.csv" "a" )
+fprintf( csvport "wn_store,wp_store,wn_access,temp,Vn,N0\n" )
+close( csvport )
+
+; ---- Sweep space ----
+wn_store_list  = list( 120e-9 160e-9 200e-9 240e-9 280e-9 320e-9 )
+wp_store_list  = list( 120e-9 160e-9 200e-9 240e-9 280e-9 320e-9 )
+wn_access_val  = 120e-9
+temp_list      = list( -40.0 0.0 27.0 85.0 125.0 )
+
+snm_script = "/lcars/home/g/gannon1/cadenceGPDK/MemoryDesignFinalProject/dice_snm_single.ocn"
+
+; ---- Outer loops ----
+foreach( wn wn_store_list
+    foreach( wp wp_store_list
+        foreach( tmp temp_list
+            g_wn_store  = wn
+            g_wp_store  = wp
+            g_wn_access = wn_access_val
+            g_temp      = tmp
+            load( snm_script )
+        )
+    )
+)
+
+printf("SNM sweep complete.\n")

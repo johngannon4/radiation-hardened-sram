@@ -1,0 +1,16 @@
+(turboOpts envSwitch) nil
+(turboOpts errorLevel) "Do not override"
+(turboOpts mtOption) "Auto"
+(turboOpts numThreads) ""
+(turboOpts preserveInst) nil
+(turboOpts preserveOption) "None"
+(turboOpts proc_affinity) ""
+(turboOpts psrFmax) ""
+(turboOpts psrFmaxRCR) ""
+(turboOpts psrOption) "Default"
+(turboOpts psrSwitch) nil
+(turboOpts psrXpsmsOption) "Default"
+(turboOpts rcrNetFmax) nil
+(turboOpts spectreDecouplingCapacitorThreshold) ""
+(turboOpts spectreResistorShortingThreshold) ""
+(turboOpts turboSwitch) nil

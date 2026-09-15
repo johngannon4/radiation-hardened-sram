@@ -1,0 +1,81 @@
+; dice_seu_single_sf_full.ocn
+simulator( 'spectre )
+design( "/lcars/home/g/gannon1/simulation/12T_DICE_Bitcell_SEU/spectre/schematic/netlist/netlist" )
+resultsDir( "/lcars/home/g/gannon1/simulation/12T_DICE_Bitcell_SEU/spectre/schematic" )
+modelFile(
+    '("/lcars/software/linux/x86_64/ic-design/design_kits/gpdk045_v_6_0/gpdk045/../models/spectre/gpdk045.scs" "sf")
+)
+analysis( 'tran ?stop "5n" ?step "1p" )
+envOption(
+    'analysisOrder list("dc" "tran")
+)
+converge( 'nodeset "/N0" g_vdd )
+converge( 'nodeset "/N2" g_vdd )
+converge( 'nodeset "/N1" 0.0 )
+converge( 'nodeset "/N3" 0.0 )
+desVar( "wn_store"  g_wn_store )
+desVar( "wp_store"  g_wp_store )
+desVar( "wn_access" g_wn_access )
+desVar( "Vdd"       g_vdd )
+temp( g_temp )
+
+; ---- Bisection parameters ----
+; 8 iterations gives precision of (50-2)/2^8 = 0.19 fC
+q_low  = 2e-15
+q_high = 50e-15
+
+csvport = outfile( "/lcars/home/g/gannon1/cadenceGPDK/MemoryDesignFinalProject/dice_seu_full_sim.csv" "a" )
+
+foreach( iter list( 1 2 3 4 5 6 7 8 )
+    q_mid = (q_low + q_high) / 2.0
+
+    when( g_polarity == 1
+        desVar( "Qinj0" q_mid * -1 )
+        desVar( "Qinj2" q_mid * -1 )
+        desVar( "Ipeak0" q_mid * -1 / 140e-12 )
+        desVar( "Ipeak2" q_mid * -1 / 140e-12 )
+        desVar( "Qinj1" 0 )
+        desVar( "Qinj3" 0 )
+        desVar( "Ipeak1" 0.0 )
+        desVar( "Ipeak3" 0.0 )
+    )
+    when( g_polarity == 0
+        desVar( "Qinj0" 0 )
+        desVar( "Qinj2" 0 )
+        desVar( "Ipeak0" 0.0 )
+        desVar( "Ipeak2" 0.0 )
+        desVar( "Qinj1" q_mid )
+        desVar( "Qinj3" q_mid )
+        desVar( "Ipeak1" q_mid / 140e-12 )
+        desVar( "Ipeak3" q_mid / 140e-12 )
+    )
+
+    run()
+    selectResult( 'tran )
+
+    when( g_polarity == 1
+        node_val = value( getData("/N0") 5e-9 )
+        when( node_val < (g_vdd / 2.0)
+            q_high = q_mid
+        )
+        when( node_val > (g_vdd / 2.0)
+            q_low = q_mid
+        )
+    )
+    when( g_polarity == 0
+        node_val = value( getData("/N1") 5e-9 )
+        when( node_val > (g_vdd / 2.0)
+            q_high = q_mid
+        )
+        when( node_val < (g_vdd / 2.0)
+            q_low = q_mid
+        )
+    )
+)
+
+; ---- Write converged Qcrit ----
+qcrit = (q_low + q_high) / 2.0
+fprintf( csvport "%s,%g,%g,%g,%g,%g,%d,%g\n"
+    "sf" g_wn_store g_wp_store g_wn_access g_temp g_vdd g_polarity qcrit )
+
+close( csvport )
