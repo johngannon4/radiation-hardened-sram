@@ -21,14 +21,14 @@ written in IEEE format for ESE 5760 (Semiconductor Memory Design) at the Univers
 | **Topologies** | 6T baseline, 12T DICE, 14T RSP, 10T Quatro — schematics and testbenches all included |
 | **Metrics** | Critical charge (Q<sub>crit</sub>) under single- and dual-node upset, static noise margin, leakage power, read access time |
 | **Scale** | 18,000 scripted simulations across sizing × temperature × supply × process corner; the SEU sweep alone is 9,000 bisection searches ≈ 72,000 Spectre transients |
-| **Headline result** | DICE is the only topology whose hardening is layout-independent; RSP's worst-case dual-node Q<sub>crit</sub> falls *below* the unhardened 6T baseline |
+| **Headline result** | Thermal management in orbital deployment of memory cells will play a critical role in radiation hardening and data integrity |
 
 ---
 
 ## The problem
 
-Orbital data centers for AI inference are now being announced by NVIDIA and SpaceX. Solar power
-is abundant up there, but the radiation is not survivable by conventional CMOS without help.
+Orbital data centers for AI inference are now being announced by SpaceX and NVIDIA. Solar power
+is abundant space, but the radiation is not survivable by conventional CMOS without help.
 High-energy protons and heavy ions deposit charge on circuit nodes; if the collected charge
 exceeds the cell's **critical charge** Q<sub>crit</sub>, the bit flips. For an inference engine a
 flipped weight bit is particularly nasty — it corrupts model outputs silently, with no fault
@@ -54,7 +54,7 @@ make writes work.
 
 ---
 
-## Results
+## Architecture Comparison Results
 
 Minimum-sized cells at nominal conditions (V<sub>DD</sub> = 1.1 V, 27 °C, TT corner):
 
@@ -207,3 +207,5 @@ The topologies are reproductions of published designs:
    application," *IEEE Trans. VLSI Syst.*, vol. 27, no. 2, pp. 407–415, 2019. (RSP)
 4. P. E. Dodd, L. W. Massengill, "Basic mechanisms and modeling of single-event upset in digital
    microelectronics," *IEEE Trans. Nucl. Sci.*, vol. 50, no. 3, pp. 583–602, 2003.
+
+Documentation drafted with AI assistance; all circuit design, simulations, and analysis is our own.
